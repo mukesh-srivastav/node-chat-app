@@ -17,14 +17,18 @@ socket.on('newMessage', function (message) {
 	jQuery('#messages').append(li);
 });
 
-//Check for server acknowledgement from server
-// socket.emit('createMessage', {
-// 	from: "Anne",
-// 	text: "This is me",
-// }, function(data) {
-// 	console.log("Server acknowledgement : ", data);
-// });
+socket.on('newLocationMessage', function (message) {
+	var li = jQuery('<li></li>');
+	var a = jQuery('<a target="_blank">My Current Location</a>');
 
+	li.text(`${message.from}: `);
+	a.attr('href', message.url);
+	li.append(a);
+
+	jQuery('#messages').append(li);
+});
+
+// For sending the message from browser form.
 jQuery('#message-form').on('submit', function (e) {
 	e.preventDefault();
 
@@ -33,5 +37,27 @@ jQuery('#message-form').on('submit', function (e) {
 		text: $('[name=message]').val()
 	}, function () {
 
+	});
+});
+
+
+//Share location
+var locationButton = jQuery('#send-location');
+locationButton.on('click', function () {
+	//if browser is not enabled for geolocation then alert.
+	if(!navigator.geolocation) {
+		return alert('Geolocation not supported by your browser');
+	}
+
+	//ask for location access permission, 
+	//if allow send the location to server 
+	//else reject with alert message 
+	navigator.geolocation.getCurrentPosition(function (position) {
+		socket.emit('createLocationMessage', {
+			latitude: position.coords.latitude,
+			longitude: position.coords.longitude,
+		})
+	}, function () {
+		alert('Unable to fetch location');
 	});
 });
