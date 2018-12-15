@@ -21,7 +21,7 @@ io.on('connection', (socket) => {
 	//everyone will see new user joined except new user
 	socket.broadcast.emit('newMessage', generateMessage('Admin', 'New User joined'));	
 
-	socket.on('createMessage', (message) => {
+	socket.on('createMessage', (message, callbackAcknowldegment) => {
 		console.log('createMessage', message);
 		// every one will get this message.
 		io.emit('newMessage',generateMessage(message.from, message.text));
@@ -32,6 +32,8 @@ io.on('connection', (socket) => {
 		// 	text: message.text,
 		// 	createdAt: new Date().getTime()
 		// });
+
+		callbackAcknowldegment("Got it");
 	});
 
 	 socket.on('disconnect', () => {

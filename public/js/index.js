@@ -10,4 +10,28 @@ socket.on('disconnect', function () {
 
 socket.on('newMessage', function (message) {
 	console.log('new message', message);
+
+	var li = jQuery('<li></li>');
+	li.text(`${message.from}: ${message.text}`);
+
+	jQuery('#messages').append(li);
+});
+
+//Check for server acknowledgement from server
+// socket.emit('createMessage', {
+// 	from: "Anne",
+// 	text: "This is me",
+// }, function(data) {
+// 	console.log("Server acknowledgement : ", data);
+// });
+
+jQuery('#message-form').on('submit', function (e) {
+	e.preventDefault();
+
+	socket.emit('createMessage', {
+		from: 'User',
+		text: $('[name=message]').val()
+	}, function () {
+
+	});
 });
